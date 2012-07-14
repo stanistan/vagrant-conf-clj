@@ -31,9 +31,14 @@ class clojure($version = "1.4.0", $home = '/home/vagrant') {
         content => "#!/bin/bash\n${clojure_alias}"
     }
 
+    $lein_dir = "${home}/.lein"
+    file { $lein_dir :
+        ensure => directory,
+    }
+
     $lein_conf = "${home}/.lein/profiles.clj"
     file { $lein_conf :
-        require => Exec["vimcl", "lein"],
+        require => [Exec["vimcl", "lein"], File[$lein_dir]],
         content => "{:user {:plugins [[lein-tarsier \"0.9.1\"]]}}",
         ensure => present
     }
