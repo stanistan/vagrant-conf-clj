@@ -19,7 +19,7 @@ class clojure($version = "1.4.0", $home = '/home/vagrant') {
     $lein_path = "https://raw.github.com/technomancy/leiningen/preview/bin/lein"
     $local_lein = "${home}/bin/lein"
     exec { "lein" :
-        command => "wget ${lein_path}; mv ./lein ${local_lein}; chmod +x ${local_lein}; ${local_lein};",
+        command => "wget ${lein_path}; mv ./lein ${local_lein}; chmod +x ${local_lein}",
         creates => $local_lein,
         require => Class["base"]
     }
@@ -34,13 +34,15 @@ class clojure($version = "1.4.0", $home = '/home/vagrant') {
     $lein_dir = "${home}/.lein"
     file { $lein_dir :
         ensure => directory,
+        mode => 755,
     }
 
     $lein_conf = "${home}/.lein/profiles.clj"
     file { $lein_conf :
         require => [Exec["vimcl", "lein"], File[$lein_dir]],
         content => "{:user {:plugins [[lein-tarsier \"0.9.1\"]]}}",
-        ensure => present
+        ensure => present,
+        mode => 755
     }
 
     $vim_clojure_remote = "https://github.com/stanistan/vimclojure-easy.git"
